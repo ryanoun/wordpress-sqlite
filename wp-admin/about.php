@@ -9,196 +9,136 @@
 /** WordPress Administration Bootstrap */
 require_once( dirname( __FILE__ ) . '/admin.php' );
 
-if ( ! wp_is_mobile() ) {
-	wp_enqueue_style( 'wp-mediaelement' );
-	wp_enqueue_script( 'wp-mediaelement' );
-	wp_localize_script( 'mediaelement', '_wpmejsSettings', array(
-		'pluginPath'        => includes_url( 'js/mediaelement/', 'relative' ),
-		'pauseOtherPlayers' => '',
-	) );
-}
+/* translators: Page title of the About WordPress page in the admin. */
+$title = _x( 'About', 'page title' );
 
-/**
- * Replaces the height and width attributes with values for full size.
- *
- * wp_video_shortcode() limits the width to 640px.
- *
- * @since 4.6.0
- * @ignore
- *
- * @param $output Video shortcode HTML output.
- * @return string Filtered HTML content to display video.
- */
-function _wp_override_admin_video_width_limit( $output ) {
-	return str_replace( array( '640', '384' ), array( '1050', '630' ), $output );
-}
-
-$video_url = 'https://videopress.com/embed/GbdhpGF3?hd=true';
-$locale    = str_replace( '_', '-', get_locale() );
-list( $locale ) = explode( '-', $locale );
-if ( 'en' !== $locale ) {
-	$video_url = add_query_arg( 'defaultLangCode', $locale, $video_url );
-}
-
-$title = __( 'About' );
-
-list( $display_version ) = explode( '-', $wp_version );
+list( $display_version ) = explode( '-', get_bloginfo( 'version' ) );
 
 include( ABSPATH . 'wp-admin/admin-header.php' );
 ?>
-	<div class="wrap about-wrap">
-		<h1><?php printf( __( 'Welcome to WordPress&nbsp;%s' ), $display_version ); ?></h1>
-
-		<p class="about-text"><?php printf( __( 'Thank you for updating to the latest version. WordPress %s changes a lot behind the scenes to make your WordPress experience even better!' ), $display_version ); ?></p>
-		<div class="wp-badge"><?php printf( __( 'Version %s' ), $display_version ); ?></div>
-
-		<h2 class="nav-tab-wrapper wp-clearfix">
-			<a href="about.php" class="nav-tab nav-tab-active"><?php _e( 'What&#8217;s New' ); ?></a>
-			<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
-			<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
-		</h2>
-
-		<div class="changelog point-releases">
-			<h3><?php _e( 'Maintenance and Security Release' ); ?></h3>
-			<p><?php printf( _n( '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-				'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.', 15 ), '4.6.1', number_format_i18n( 15 ) ); ?>
-				<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'https://codex.wordpress.org/Version_4.6.1' ); ?>
-			</p>
-		</div>
-
-		<div class="headline-feature feature-video">
-			<iframe width="1050" height="591" src="<?php echo esc_url( $video_url ); ?>" frameborder="0" allowfullscreen></iframe>
-			<script src="https://videopress.com/videopress-iframe.js"></script>
-		</div>
-
-		<hr>
-
-		<div class="streamlined-updates feature-section one-col">
-			<h2><?php _e( 'Streamlined Updates' ); ?></h2>
-			<p><?php _e( 'Don&#8217;t lose your place: stay on the same page while you update, install, and delete your plugins and themes.' ); ?></p>
+	<div class="wrap about-wrap full-width-layout">
+		<h1>
 			<?php
-			if ( ! wp_is_mobile() ) {
-				add_filter( 'wp_video_shortcode', '_wp_override_admin_video_width_limit' );
-				echo wp_video_shortcode( array(
-					'mp4'      => 'https://s.w.org/images/core/4.6/streamlined-updates.mp4',
-					'webm'     => 'https://s.w.org/images/core/4.6/streamlined-updates.webm',
-					'poster'   => 'https://s.w.org/images/core/4.6/streamlined-updates-2000.png?v1',
-					'loop'     => true,
-					'autoplay' => true,
-					'width'    => 1050,
-					'height'   => 630,
-					'class'    => 'wp-video-shortcode feature-video',
-				) );
-				remove_filter( 'wp_video_shortcode', '_wp_override_admin_video_width_limit' );
-			} else {
-				echo '<img src="https://s.w.org/images/core/4.6/streamlined-updates-1057.png?v1" alt="" srcset="https://s.w.org/images/core/4.6/streamlined-updates-1664.png?v1 1664w, https://s.w.org/images/core/4.6/streamlined-updates-200.png?v1 200w, https://s.w.org/images/core/4.6/streamlined-updates-1057.png?v1 1057w, https://s.w.org/images/core/4.6/streamlined-updates-2000.png?v1 2000w"  sizes="(max-width: 500px) calc(100vw - 40px), (max-width: 782px) calc(100vw - 70px), (max-width: 959px) calc(100vw - 116px), (max-width: 1290px) calc(100vw - 240px), 1050px" />';
-			}
+			/* translators: %s: The current WordPress version number */
+			printf( __( 'Welcome to WordPress&nbsp;%s' ), $display_version );
+			?>
+		</h1>
+
+		<p class="about-text"><?php printf( __( 'Congratulations on updating to WordPress 5.2! This update makes it easier than ever to fix your site if something goes wrong.' ), $display_version ); ?></p>
+
+		<div class="wp-badge">
+			<?php
+			/* translators: %s: The current WordPress version number */
+			printf( __( 'Version %s' ), $display_version );
 			?>
 		</div>
 
-		<hr />
+		<nav class="nav-tab-wrapper wp-clearfix" aria-label="<?php esc_attr_e( 'Secondary menu' ); ?>">
+			<a href="about.php" class="nav-tab nav-tab-active"><?php _e( 'What&#8217;s New' ); ?></a>
+			<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
+			<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
+			<a href="freedoms.php?privacy-notice" class="nav-tab"><?php _e( 'Privacy' ); ?></a>
+		</nav>
 
-		<div class="native-fonts feature-section one-col">
-			<h2><?php _e( 'Native Fonts' ); ?></h2>
-			<p><?php _e( 'The WordPress dashboard now takes advantage of the fonts you already have, making it load faster and letting you feel more at home on whatever device you use.' ); ?></p>
-			<img src="https://s.w.org/images/core/4.6/native-fonts-992.png?v1" alt="" srcset="https://cldup.com/Hqmo5VLb-E.png?v1 922w, https://s.w.org/images/core/4.6/native-fonts-200.png?v1 200w,https://s.w.org/images/core/4.6/native-fonts-371.png?v1 371w,https://s.w.org/images/core/4.6/native-fonts-510.png?v1 510w, https://s.w.org/images/core/4.6/native-fonts-560.png?v1 560w, https://s.w.org/images/core/4.6/native-fonts-781.png?v1 781w, https://s.w.org/images/core/4.6/native-fonts-2000.png?v1 2000w" sizes="(max-width: 500px) calc(100vw - 40px), (max-width: 782px) calc(100vw - 70px), (max-width: 959px) calc(100vw - 116px), (max-width: 1290px) calc(100vw - 240px), 1050px"/>
+		<div class="headline-feature">
+			<h2><?php _e( 'Keeping Your Site Safe' ); ?></h2>
+			<p class="lead-description"><?php _e( 'WordPress 5.2 gives you even more robust tools for identifying and fixing configuration issues and fatal errors. Whether you are a developer helping clients or you manage your site solo, these tools can help get you the right information when you need it.' ); ?></p>
+			<div class="inline-svg aligncenter">
+				<img src="https://s.w.org/images/core/5.2/about_maintain-wordpress-v2.svg" alt="">
+			</div>
 		</div>
 
 		<hr />
 
-		<div class="feature-section two-col">
-			<h2><?php _e( 'Editor Improvements' ); ?></h2>
-			<div class="col">
-				<img src="https://s.w.org/images/core/4.6/inline-link-checker-608.png?v1" alt="" srcset="https://s.w.org/images/core/4.6/inline-link-checker-789.png?v1 789w, https://s.w.org/images/core/4.6/inline-link-checker-200.png?v1 200w, https://s.w.org/images/core/4.6/inline-link-checker-384.png?v1 384w, https://s.w.org/images/core/4.6/inline-link-checker-608.png?v1 608w, https://s.w.org/images/core/4.6/inline-link-checker-992.png?v1 992w" sizes="(max-width: 500px) calc(100vw - 40px), (max-width: 781px) calc((100vw - 70px) * .466), (max-width: 959px) calc((100vw - 116px) * .469), (max-width: 1290px) calc((100vw - 240px) * .472), 496px"/>
-				<h3><?php _e( 'Inline Link Checker' ); ?></h3>
-				<p><?php
+		<div class="feature-section is-wide has-2-columns is-wider-left">
+			<div class="column is-vertically-aligned-center">
+				<h3><?php _e( 'Site Health Check' ); ?></h3>
+				<p>
+					<?php
 					printf(
-						/* translators: %s: Home URL appended with 'wordpress.org'  */
-						__( 'Ever accidentally made a link to %s? Now WordPress automatically checks to make sure you didn&#8217;t.' ),
-						home_url( 'wordpress.org' )
+						/* translators: 1: link to the WordPress 5.1 release post */
+						__( 'Building on <a href="%1$s">the Site Health features introduced in 5.1</a>, this release adds two new pages to help debug common configuration issues. It also adds space where developers can include debugging information for site maintainers.' ),
+						__( 'https://wordpress.org/news/2019/02/betty/' )
 					);
-				?></p>
+
+					if ( current_user_can( 'install_plugins' ) ) {
+						printf(
+							/* translators: 1: link to /wp-admin/site-health.php 2: link to /wp-admin/site-health.php?tab=debug */
+							__( ' <a href="%1$s">Check your site status</a>, and <a href="%2$s">learn how to debug issues</a>.' ),
+							admin_url( 'site-health.php' ),
+							admin_url( 'site-health.php?tab=debug' )
+						);
+					}
+					?>
+				</p>
 			</div>
-			<div class="col">
-				<img src="https://s.w.org/images/core/4.6/content-recovery-561.png?v1" alt="" srcset="https://s.w.org/images/core/4.6/content-recovery-701.png?v1 701w, https://s.w.org/images/core/4.6/content-recovery-200.png?v1 200w, https://s.w.org/images/core/4.6/content-recovery-400.png?v1 400w, https://s.w.org/images/core/4.6/content-recovery-561.png?v1 561w, https://s.w.org/images/core/4.6/content-recovery-992.png?v1 992w" sizes="(max-width: 500px) calc(100vw - 40px), (max-width: 781px) calc((100vw - 70px) * .466), (max-width: 959px) calc((100vw - 116px) * .469), (max-width: 1290px) calc((100vw - 240px) * .472), 496px"/>
-				<h3><?php _e( 'Content Recovery' ); ?></h3>
-				<p><?php _e( 'As you type, WordPress saves your content to the browser. Recovering saved content is even easier with WordPress 4.6.' ); ?></p>
+			<div class="column">
+				<div class="inline-svg aligncenter">
+					<img src="https://s.w.org/images/core/5.2/about_site-health.svg" alt="">
+				</div>
 			</div>
 		</div>
 
 		<hr />
 
-		<div class="changelog">
-			<h2><?php _e( 'Under the Hood' ); ?></h2>
-
-			<div class="under-the-hood three-col">
-				<div class="col">
-					<h3><?php _e( 'Resource Hints' ); ?></h3>
-					<p><?php
-						printf(
-							/* translators: %s: https://make.wordpress.org/core/2016/07/06/resource-hints-in-4-6/ */
-							__( '<a href="%s">Resource hints help browsers</a> decide which resources to fetch and preprocess. WordPress 4.6 adds them automatically for your styles and scripts making your site even faster.' ),
-							'https://make.wordpress.org/core/2016/07/06/resource-hints-in-4-6/'
-						);
-					?></p>
-				</div>
-				<div class="col">
-					<h3><?php _e( 'Robust Requests' ); ?></h3>
-					<p><?php _e( 'The HTTP API now leverages the Requests library, improving HTTP standard support and adding case-insensitive headers, parallel HTTP requests, and support for Internationalized Domain Names.' ); ?></p>
-				</div>
-				<div class="col">
-					<h3><?php
-						/* translators: 1: WP_Term_Query, 2: WP_Post_Type */
-						printf( __( '%1$s and %2$s' ), '<code>WP_Term_Query</code>', '<code>WP_Post_Type</code>' );
-					?></h3>
-					<p><?php
-						printf(
-							/* translators: 1: WP_Term_Query, 2: WP_Post_Type */
-							__( 'A new %1$s class adds flexibility to query term information while a new %2$s object makes interacting with post types more predictable.' ),
-							'<code>WP_Term_Query</code>',
-							'<code>WP_Post_Type</code>'
-						);
-					?></p>
+		<div class="feature-section is-wide has-2-columns is-wider-right">
+			<div class="column">
+				<div class="inline-svg aligncenter">
+					<img src="https://s.w.org/images/core/5.2/about_error-protection.svg" alt="">
 				</div>
 			</div>
-
-			<div class="under-the-hood three-col">
-				<div class="col">
-					<h3><?php _e( 'Meta Registration API' ); ?></h3>
-					<p><?php
-						printf(
-							/* translators: %s: https://make.wordpress.org/core/2016/07/08/enhancing-register_meta-in-4-6/  */
-							__( 'The Meta Registration API <a href="%s">has been expanded</a> to support types, descriptions, and REST API visibility.' ),
-							'https://make.wordpress.org/core/2016/07/08/enhancing-register_meta-in-4-6/'
-						);
-					?></p>
-				</div>
-				<div class="col">
-					<h3><?php _e( 'Translations On Demand' ); ?></h3>
-					<p><?php _e( 'WordPress will install and use the newest language packs for your plugins and themes as soon as they&#8217;re available from <a href="https://translate.wordpress.org/">WordPress.org&#8217;s community of translators</a>.' ); ?></p>
-				</div>
-				<div class="col">
-					<h3><?php _e( 'JavaScript Library Updates' ); ?></h3>
-					<p><?php _e( 'Masonry 3.3.2, imagesLoaded 3.2.0, MediaElement.js 2.22.0, TinyMCE 4.4.1, and Backbone.js 1.3.3 are bundled.' ); ?></p>
-				</div>
+			<div class="column is-vertically-aligned-center">
+				<h3><?php _e( 'PHP Error Protection' ); ?></h3>
+				<p><?php _e( 'This administrator-focused update will let you safely fix or manage fatal errors without requiring developer time. It features better handling of the so-called “white screen of death,” and a way to enter recovery mode,  which pauses error-causing plugins or themes.' ); ?></p>
 			</div>
+		</div>
 
-			<div class="under-the-hood two-col">
-				<div class="col">
-					<h3><?php _e( 'Customizer APIs for Setting Validation and Notifications' ); ?></h3>
-					<p><?php _e( 'Settings now have an <a href="https://make.wordpress.org/core/2016/07/05/customizer-apis-in-4-6-for-setting-validation-and-notifications/">API for enforcing validation constraints</a>. Likewise, customizer controls now support notifications, which are used to display validation errors instead of failing silently.' ); ?></p>
-				</div>
-				<div class="col">
-					<h3><?php _e( 'Multisite, now faster than ever' ); ?></h3>
-					<p><?php
-						printf(
-							/* translators: 1: WP_Site_Query, 2: WP_Network_Query */
-							__( 'Cached and comprehensive site queries improve your network admin experience. The addition of %1$s and %2$s help craft advanced queries with less effort.' ),
-							'<code>WP_Site_Query</code>',
-							'<code>WP_Network_Query</code>'
-						);
-					?></p>
-				</div>
+		<hr />
+
+		<h3 class="aligncenter"><?php _e( 'Improvements for Everyone' ); ?></h3>
+
+		<div class="has-2-columns">
+			<div class="column aligncenter">
+				<h4><?php _e( 'Accessibility Updates' ); ?></h4>
+				<p><?php _e( 'A number of changes work together to improve contextual awareness and keyboard navigation flow for those using screen readers and other assistive technologies.' ); ?></p>
+			</div>
+			<div class="column aligncenter">
+				<h4><?php _e( 'New Dashboard Icons' ); ?></h4>
+				<p><?php _e( 'Thirteen new icons include Instagram, a suite of icons for BuddyPress, and rotated Earth icons for global inclusion. Find them in the Dashboard and have some fun!' ); ?></p>
+			</div>
+		</div>
+
+		<hr />
+
+		<h3 class="aligncenter"><?php _e( 'Developer Happiness' ); ?></h3>
+
+		<div class="has-2-columns is-fullwidth">
+			<div class="column">
+				<h4><a href="https://make.wordpress.org/core/2019/03/26/coding-standards-updates-for-php-5-6/"><?php _e( 'PHP Version Bump' ); ?></a></h4>
+				<p><?php _e( 'The minimum supported PHP version is now 5.6.20. As of WordPress 5.2, themes and plugins can safely take advantage of namespaces, anonymous functions, and more!' ); ?></p>
+			</div>
+			<div class="column">
+				<h4><a href="https://make.wordpress.org/core/2019/04/24/developer-focused-privacy-updates-in-5-2/"><?php _e( 'Privacy Updates' ); ?></a></h4>
+				<p><?php _e( 'A new theme page template, a conditional function, and two CSS classes make designing and customizing the Privacy Policy page easier.' ); ?></p>
+			</div>
+		</div>
+		<div class="has-2-columns is-fullwidth">
+			<div class="column">
+				<h4><a href="https://make.wordpress.org/core/2019/04/24/miscellaneous-developer-updates-in-5-2/"><?php _e( 'New Body Tag Hook' ); ?></a></h4>
+				<p>
+					<?php
+					printf(
+						/* translators: 1: wp_body_open 2: <body> */
+						__( '5.2 introduces a %1$s hook, which lets themes support injecting code right at the beginning of the %2$s element.' ),
+						'<code>wp_body_open</code>',
+						'<code>&lt;body&gt;</code>'
+					);
+					?>
+				</p>
+			</div>
+			<div class="column">
+				<h4><a href="https://make.wordpress.org/core/2019/03/25/building-javascript/"><?php _e( 'Building JavaScript' ); ?></a></h4>
+				<p><?php _e( 'With the addition of webpack and Babel configurations in the @wordpress/scripts package, developers won&#8217;t have to worry about setting up complex build tools to write modern JavaScript.' ); ?></p>
 			</div>
 		</div>
 
@@ -212,7 +152,6 @@ include( ABSPATH . 'wp-admin/admin-header.php' );
 			<?php endif; ?>
 			<a href="<?php echo esc_url( self_admin_url() ); ?>"><?php is_blog_admin() ? _e( 'Go to Dashboard &rarr; Home' ) : _e( 'Go to Dashboard' ); ?></a>
 		</div>
-
 	</div>
 <?php
 
@@ -236,16 +175,22 @@ __( '<strong>Version %s</strong> addressed one security issue.' );
 __( '<strong>Version %s</strong> addressed some security issues.' );
 
 /* translators: 1: WordPress version number, 2: plural number of bugs. */
-_n_noop( '<strong>Version %1$s</strong> addressed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed %2$s bugs.' );
+_n_noop(
+	'<strong>Version %1$s</strong> addressed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed %2$s bugs.'
+);
 
 /* translators: 1: WordPress version number, 2: plural number of bugs. Singular security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.' );
+_n_noop(
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs.'
+);
 
 /* translators: 1: WordPress version number, 2: plural number of bugs. More than one security issue. */
-_n_noop( '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
-         '<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.' );
+_n_noop(
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug.',
+	'<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs.'
+);
 
 /* translators: %s: Codex URL */
 __( 'For more information, see <a href="%s">the release notes</a>.' );

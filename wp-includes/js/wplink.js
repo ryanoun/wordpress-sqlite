@@ -1,7 +1,11 @@
-var wpLink;
+/**
+ * @output wp-includes/js/wplink.js
+ */
+
+ /* global wpLink */
 
 ( function( $, wpLinkL10n, wp ) {
-	var editor, searchTimer, River, Query, correctedURL, linkNode,
+	var editor, searchTimer, River, Query, correctedURL,
 		emailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i,
 		urlRegexp = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,63}[^ "]*$/i,
 		inputs = {},
@@ -9,10 +13,14 @@ var wpLink;
 		isTouch = ( 'ontouchend' in document );
 
 	function getLink() {
-		return linkNode || editor.dom.getParent( editor.selection.getNode(), 'a[href]' );
+		if ( editor ) {
+			return editor.$( 'a[data-wplink-edit="true"]' );
+		}
+
+		return null;
 	}
 
-	wpLink = {
+	window.wpLink = {
 		timeToTriggerRiver: 150,
 		minRiverAJAXDuration: 200,
 		riverBottomThreshold: 5,
@@ -93,13 +101,12 @@ var wpLink;
 			}
 		},
 
-		open: function( editorId, url, text, node ) {
+		open: function( editorId, url, text ) {
 			var ed,
 				$body = $( document.body );
 
 			$body.addClass( 'modal-open' );
 			wpLink.modalOpen = true;
-			linkNode = node;
 
 			wpLink.range = null;
 
@@ -124,10 +131,6 @@ var wpLink;
 					editor = ed;
 				} else {
 					editor = null;
-				}
-
-				if ( editor && window.tinymce.isIE ) {
-					editor.windowManager.wplinkBookmark = editor.selection.getBookmark();
 				}
 			}
 
@@ -205,10 +208,10 @@ var wpLink;
 				return false;
 			}
 
-			if ( linkNode ) {
-				nodes = linkNode.childNodes;
+			if ( linkNode.length ) {
+				nodes = linkNode[0].childNodes;
 
-				if ( nodes.length === 0 ) {
+				if ( ! nodes || ! nodes.length ) {
 					return false;
 				}
 
@@ -229,9 +232,9 @@ var wpLink;
 				linkNode = getLink(),
 				onlyText = this.hasSelectedText( linkNode );
 
-			if ( linkNode ) {
-				linkText = linkNode.textContent || linkNode.innerText;
-				href = editor.dom.getAttrib( linkNode, 'href' );
+			if ( linkNode.length ) {
+				linkText = linkNode.text();
+				href = linkNode.attr( 'href' );
 
 				if ( ! $.trim( linkText ) ) {
 					linkText = text || '';
@@ -243,7 +246,7 @@ var wpLink;
 
 				if ( href !== '_wp_link_placeholder' ) {
 					inputs.url.val( href );
-					inputs.openInNewTab.prop( 'checked', '_blank' === editor.dom.getAttrib( linkNode, 'target' ) );
+					inputs.openInNewTab.prop( 'checked', '_blank' === linkNode.attr( 'target' ) );
 					inputs.submit.val( wpLinkL10n.update );
 				} else {
 					this.setDefaultValues( linkText );
@@ -308,7 +311,7 @@ var wpLink;
 
 			return {
 				href: $.trim( inputs.url.val() ),
-				target: inputs.openInNewTab.prop( 'checked' ) ? '_blank' : ''
+				target: inputs.openInNewTab.prop( 'checked' ) ? '_blank' : null
 			};
 		},
 
@@ -316,7 +319,7 @@ var wpLink;
 			var html = '<a href="' + attrs.href + '"';
 
 			if ( attrs.target ) {
-				html += ' target="' + attrs.target + '"';
+				html += ' rel="noopener" target="' + attrs.target + '"';
 			}
 
 			return html + '>';
@@ -340,6 +343,13 @@ var wpLink;
 
 			attrs = wpLink.getAttrs();
 			text = inputs.text.val();
+
+			var parser = document.createElement( 'a' );
+			parser.href = attrs.href;
+
+			if ( 'javascript:' === parser.protocol || 'data:' === parser.protocol ) { // jshint ignore:line
+				attrs.href = '';
+			}
 
 			// If there's no href, return.
 			if ( ! attrs.href ) {
@@ -384,6 +394,7 @@ var wpLink;
 
 			wpLink.close();
 			textarea.focus();
+			$( textarea ).trigger( 'change' );
 
 			// Audible confirmation message when a link has been inserted in the Editor.
 			wp.a11y.speak( wpLinkL10n.linkInserted );
@@ -391,11 +402,13 @@ var wpLink;
 
 		mceUpdate: function() {
 			var attrs = wpLink.getAttrs(),
-				link, text;
+				$link, text, hasText;
 
-			if ( window.tinymce.isIE && editor.windowManager.wplinkBookmark ) {
-				editor.selection.moveToBookmark( editor.windowManager.wplinkBookmark );
-				editor.windowManager.wplinkBookmark = null;
+			var parser = document.createElement( 'a' );
+			parser.href = attrs.href;
+
+			if ( 'javascript:' === parser.protocol || 'data:' === parser.protocol ) { // jshint ignore:line
+				attrs.href = '';
 			}
 
 			if ( ! attrs.href ) {
@@ -404,39 +417,46 @@ var wpLink;
 				return;
 			}
 
-			link = getLink();
+			$link = getLink();
 
-			if ( inputs.wrap.hasClass( 'has-text-field' ) ) {
-				text = inputs.text.val() || attrs.href;
-			}
-
-			if ( link ) {
-				if ( text ) {
-					if ( 'innerText' in link ) {
-						link.innerText = text;
-					} else {
-						link.textContent = text;
-					}
+			editor.undoManager.transact( function() {
+				if ( ! $link.length ) {
+					editor.execCommand( 'mceInsertLink', false, { href: '_wp_link_placeholder', 'data-wp-temp-link': 1 } );
+					$link = editor.$( 'a[data-wp-temp-link="1"]' ).removeAttr( 'data-wp-temp-link' );
+					hasText = $.trim( $link.text() );
 				}
 
-				// Not editing any more
-				attrs['data-wplink-edit'] = null;
-				editor.dom.setAttribs( link, attrs );
-			} else {
-				if ( text ) {
-					editor.selection.setNode( editor.dom.create( 'a', attrs, editor.dom.encode( text ) ) );
+				if ( ! $link.length ) {
+					editor.execCommand( 'unlink' );
 				} else {
-					editor.execCommand( 'mceInsertLink', false, attrs );
+					if ( inputs.wrap.hasClass( 'has-text-field' ) ) {
+						text = inputs.text.val();
+
+						if ( text ) {
+							$link.text( text );
+						} else if ( ! hasText ) {
+							$link.text( attrs.href );
+						}
+					}
+
+					attrs['data-wplink-edit'] = null;
+					attrs['data-mce-href'] = attrs.href;
+					$link.attr( attrs );
 				}
-			}
+			} );
 
 			wpLink.close( 'noReset' );
 			editor.focus();
-			editor.nodeChanged();
 
-			if ( link && editor.plugins.wplink ) {
-				editor.plugins.wplink.checkLink( link );
+			if ( $link.length ) {
+				editor.selection.select( $link[0] );
+
+				if ( editor.plugins.wplink ) {
+					editor.plugins.wplink.checkLink( $link[0] );
+				}
 			}
+
+			editor.nodeChanged();
 
 			// Audible confirmation message when a link has been inserted in the Editor.
 			wp.a11y.speak( wpLinkL10n.linkInserted );
@@ -444,6 +464,10 @@ var wpLink;
 
 		updateFields: function( e, li ) {
 			inputs.url.val( li.children( '.item-permalink' ).val() );
+
+			if ( inputs.wrap.hasClass( 'has-text-field' ) && ! inputs.text.val() ) {
+				inputs.text.val( li.children( '.item-title' ).text() );
+			}
 		},
 
 		getUrlFromSelection: function( selection ) {
@@ -539,7 +563,7 @@ var wpLink;
 			}
 
 			// Up Arrow and Down Arrow keys.
-			if ( 38 !== event.keyCode && 40 !== event.keyCode ) {
+			if ( event.shiftKey || ( 38 !== event.keyCode && 40 !== event.keyCode ) ) {
 				return;
 			}
 

@@ -3,7 +3,7 @@
 @import 'mixins';
 
 
-html {
+body {
 	background: $body-background;
 }
 
@@ -84,9 +84,7 @@ input[type=radio]:checked:before {
 /* List tables */
 
 .wrap .add-new-h2:hover, /* deprecated */
-.wrap .page-title-action:hover,
-.tablenav .tablenav-pages a:hover,
-.tablenav .tablenav-pages a:focus {
+.wrap .page-title-action:hover {
 	color: $menu-text;
 	background-color: $menu-background;
 }
@@ -132,7 +130,7 @@ input[type=radio]:checked:before {
 
 /* Active tabs use a bottom border color that matches the page background color. */
 
-.about-wrap h2 .nav-tab-active,
+.about-wrap .nav-tab-active,
 .nav-tab-active,
 .nav-tab-active:hover {
 	background-color: $body-background;
@@ -227,22 +225,14 @@ ul#adminmenu > li.current > a.current:after {
 
 /* Admin Menu: collapse button */
 
-#collapse-menu {
+#collapse-button {
     color: $menu-collapse-text;
 }
 
-#collapse-menu:hover {
-    color: $menu-collapse-focus-text;
+#collapse-button:hover,
+#collapse-button:focus {
+    color: $menu-submenu-focus-text;
 }
-
-#collapse-button div:after {
-    color: $menu-collapse-icon;
-}
-
-#collapse-menu:hover #collapse-button div:after {
-    color: $menu-collapse-focus-icon;
-}
-
 
 /* Admin Bar */
 
@@ -324,6 +314,7 @@ ul#adminmenu > li.current > a.current:after {
 #wpadminbar li:hover .ab-item:before,
 #wpadminbar li a:focus .ab-icon:before,
 #wpadminbar li .ab-item:focus:before,
+#wpadminbar li .ab-item:focus .ab-icon:before,
 #wpadminbar li.hover .ab-icon:before,
 #wpadminbar li.hover .ab-item:before,
 #wpadminbar li:hover #adminbarsearch:before,
@@ -355,6 +346,26 @@ ul#adminmenu > li.current > a.current:after {
 #wpadminbar > #wp-toolbar > #wp-admin-bar-top-secondary > #wp-admin-bar-search #adminbarsearch input.adminbar-input:focus {
 	color: $menu-text;
 	background: $adminbar-input-background;
+}
+
+/* Admin Bar: recovery mode */
+
+#wpadminbar #wp-admin-bar-recovery-mode {
+	color: $adminbar-recovery-exit-text;
+	background-color: $adminbar-recovery-exit-background;
+}
+
+#wpadminbar #wp-admin-bar-recovery-mode .ab-item,
+#wpadminbar #wp-admin-bar-recovery-mode a.ab-item {
+	color: $adminbar-recovery-exit-text;
+}
+
+#wpadminbar .ab-top-menu > #wp-admin-bar-recovery-mode.hover >.ab-item,
+#wpadminbar.nojq .quicklinks .ab-top-menu > #wp-admin-bar-recovery-mode > .ab-item:focus,
+#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-recovery-mode:hover > .ab-item,
+#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-recovery-mode > .ab-item:focus {
+	color: $adminbar-recovery-exit-text;
+	background-color: $adminbar-recovery-exit-background-alt;
 }
 
 /* Admin Bar: my account */
@@ -415,12 +426,7 @@ ul#adminmenu > li.current > a.current:after {
 }
 
 .media-selection .attachment.selection.details .thumbnail {
-	-webkit-box-shadow:
-		0px 0px 0px 1px #fff,
-		0px 0px 0px 3px $highlight-color;
-	box-shadow:
-		0px 0px 0px 1px #fff,
-		0px 0px 0px 3px $highlight-color;
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px $highlight-color;
 }
 
 
@@ -472,17 +478,6 @@ body.more-filters-opened .more-filters:focus:before {
 .widgets-chooser li.widgets-chooser-selected:before,
 .widgets-chooser li.widgets-chooser-selected:focus:before {
 	color: $menu-highlight-text;
-}
-
-/* Customize */
-
-#customize-theme-controls .widget-area-select .selected {
-	background-color: $menu-highlight-background;
-	color: $menu-highlight-text;
-}
-
-#customize-footer-actions .devices button:focus {
-	border-bottom-color: $highlight-color;
 }
 
 /* Responsive Component */

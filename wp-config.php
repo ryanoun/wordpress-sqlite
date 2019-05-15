@@ -20,8 +20,9 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('WP_HOME','http://example.com');
-define('WP_SITEURL','http://example.com');
+# define('WP_HOME','http://example.com');
+# define('WP_SITEURL','http://example.com');
+
 define('DB_FILE', 'wordpress.db');
 define('DB_DIR', dirname(__FILE__).'/');
 define('DB_NAME', 'database_name_here');
