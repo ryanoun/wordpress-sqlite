@@ -17,7 +17,7 @@
  *
  * @package WordPress
  */
- 
+
 /** SQLite database */
 define( 'DB_DIR', dirname(__FILE__) . '/wp-content/database/' );
 define( 'DB_FILE', 'wordpress.db' );
@@ -50,14 +50,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         'dtOE>]_h&t!E<]{Shz=lh|t:+wVD)=$Sz$[+O61NT]1:P.EK),1*}0N{=?&BuQ7?');
-define('SECURE_AUTH_KEY',  'Fy@:zw$P`)NGfq(4WhC 1wnU@|U<7Jn+V^_U^WS{@y+hPAqYJ|y|K0]xp]>^FT@E');
-define('LOGGED_IN_KEY',    'yH_+-e(?X/},^w#T*AQXOZ?}<$yFz<6EaqH@4h+LQ=o}GYa)?@:l<VxERaiy^XJJ');
-define('NONCE_KEY',        'lT.9V3ge^_?S3Lx~Sg.+Z37s71/ZpK@|RyNPj#)+J7vqbbaG=1%r6ntb6cvDGd4 ');
-define('AUTH_SALT',        'ORC4AF~6EV}-4o|;B}Bf<7zL7P<S2mic7].csNWw+Tz(M/En^aN7NIip^B1JycOI');
-define('SECURE_AUTH_SALT', '<Q3|y+9jpO5Lprhxv1@Y>Vag}$e(W$5fyOI|M]|UTEv!X/^((Z)8q?-9+}+5=WN>');
-define('LOGGED_IN_SALT',   'Bb&;:tTHkd)tK+? lENl|Mjir[f)~|iR}EIg`2CP<Ss~WK5^7sWUT]v-RX8L2t>:');
-define('NONCE_SALT',       '[X0T+|i@`J$/SoA yPrTZzeMidx)JBONowUN1@<OX)X_)+^u6K!+)nk>If_inDvG');
+define( 'AUTH_KEY',         'put your unique phrase here' );
+define( 'SECURE_AUTH_KEY',  'put your unique phrase here' );
+define( 'LOGGED_IN_KEY',    'put your unique phrase here' );
+define( 'NONCE_KEY',        'put your unique phrase here' );
+define( 'AUTH_SALT',        'put your unique phrase here' );
+define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
+define( 'LOGGED_IN_SALT',   'put your unique phrase here' );
+define( 'NONCE_SALT',       'put your unique phrase here' );
 
 /**#@-*/
 
